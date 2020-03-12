@@ -1,0 +1,17 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+matplotlib = "==3.2.0"
+seaborn = "==0.10.0"
+jupyterlab = "==2.0.1"
+unet = {editable = true,path = "."}
+
+[packages]
+tensorflow = "==2.1.0"
+numpy = "==1.18.1"
+
+[requires]
+python_version = "3.7"
