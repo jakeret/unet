@@ -1,5 +1,5 @@
 import logging
-from collections import Callable
+from typing import Callable
 
 import tensorflow as tf
 import tensorflow.keras.backend as K
