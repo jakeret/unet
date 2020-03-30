@@ -2,15 +2,16 @@ from pathlib import Path
 
 import numpy as np
 import tensorflow as tf
-from tensorflow_core.python.keras.callbacks import Callback
+from tensorflow.keras.callbacks import TensorBoard, Callback
+from tensorflow_core.python.keras.api._v2.keras import backend as K
 
 from unet.utils import crop_to_shape, to_rgb
 
 
 class TensorBoardImageSummary(Callback):
 
-    def __init__(self, logdir:Path, images:np.array, labels:np.array, max_outputs:int=None):
-        self.logdir = str(logdir / "summary")
+    def __init__(self, logdir:str, images:np.array, labels:np.array, max_outputs:int=None):
+        self.logdir = str(Path(logdir) / "summary")
         self.images = images
         self.labels = labels
         if max_outputs is None:
@@ -31,3 +32,10 @@ class TensorBoardImageSummary(Callback):
 
         with self.file_writer.as_default():
             tf.summary.image("Training data", output, step=epoch, max_outputs=self.max_outputs)
+
+
+class TensorBoardWithLearningRate(TensorBoard):
+    def on_epoch_end(self, batch, logs=None):
+        logs = logs or {}
+        logs['learning_rate'] = K.get_value(self.model.optimizer.lr)
+        super().on_epoch_end(batch, logs)

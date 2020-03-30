@@ -102,5 +102,5 @@ def build_model(channels:int,
                       )(x)
     x = layers.Activation("relu")(x)
     outputs = layers.Activation("softmax")(x)
-    model = Model(inputs, outputs)
+    model = Model(inputs, outputs, name="unet")
     return model

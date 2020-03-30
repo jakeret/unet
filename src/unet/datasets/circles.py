@@ -26,7 +26,7 @@ def _build_samples(sample_count:int, nx:int, ny:int, circles:int) -> Tuple[np.ar
     return images, labels
 
 
-def _create_image_and_mask(nx, ny, cnt=10, r_min=5, r_max=50, border=92, sigma=20):
+def _create_image_and_mask(nx, ny, cnt=10, r_min=3, r_max=10, border=32, sigma=20):
     image = np.ones((nx, ny, 1))
     mask = np.zeros((nx, ny), dtype=np.bool)
 
