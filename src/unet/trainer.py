@@ -29,6 +29,10 @@ class Trainer:
         self.tensorboard_images_callback = tensorboard_images_callback
         self.callbacks = callbacks
         self.learning_rate_scheduler = learning_rate_scheduler
+
+        if scheduler_opts is None:
+            scheduler_opts = {}
+
         self.scheduler_opts=scheduler_opts
 
         if log_dir_path is None:
@@ -53,21 +57,23 @@ class Trainer:
                                                                       epochs=epochs,
                                                                       **self.scheduler_opts)
 
-        callbacks = self._build_callbacks(validation_dataset)
+        callbacks = self._build_callbacks(train_dataset,
+                                          validation_dataset)
 
         if learning_rate_scheduler:
             callbacks += [learning_rate_scheduler]
 
-        model.fit(
-            x=train_dataset[0],
-            y=utils.crop_to_shape(train_dataset[1], prediction_shape),
-            validation_data=self._build_validation_data(validation_dataset, prediction_shape),
-            epochs=epochs,
-            batch_size=batch_size,
-            callbacks=callbacks
-        )
+        history = model.fit(x=train_dataset[0],
+                            y=utils.crop_to_shape(train_dataset[1], prediction_shape),
+                            validation_data=self._build_validation_data(validation_dataset,
+                                                                        prediction_shape),
+                            epochs=epochs,
+                            batch_size=batch_size,
+                            callbacks=callbacks)
 
         self.evaluate(model, test_dataset, prediction_shape)
+
+        return history
 
     def _get_prediction_shape(self,
                               model: Model,
@@ -84,7 +90,9 @@ class Trainer:
             validation_data = None
         return validation_data
 
-    def _build_callbacks(self, validation_dataset: Optional[Tuple]) -> List[Callback]:
+    def _build_callbacks(self,
+                         train_dataset: Optional[Tuple],
+                         validation_dataset: Optional[Tuple]) -> List[Callback]:
         if self.callbacks:
            callbacks = self.callbacks
         else:
@@ -93,7 +101,8 @@ class Trainer:
         if isinstance(self.checkpoint_callback, Callback):
             callbacks.append(self.checkpoint_callback)
         elif self.checkpoint_callback:
-            callbacks.append(ModelCheckpoint(self.log_dir_path))
+            callbacks.append(ModelCheckpoint(self.log_dir_path,
+                                             save_best_only=True))
 
         if isinstance(self.tensorboard_callback, Callback):
             callbacks.append(self.tensorboard_callback)
@@ -103,11 +112,20 @@ class Trainer:
         if isinstance(self.tensorboard_images_callback, Callback):
             callbacks.append(self.tensorboard_images_callback)
         elif self.tensorboard_images_callback:
-            tensorboard_image_summary = TensorBoardImageSummary(self.log_dir_path,
-                                                                images=validation_dataset[0],
-                                                                labels=validation_dataset[1],
+            tensorboard_image_summary = TensorBoardImageSummary("Train",
+                                                                self.log_dir_path,
+                                                                images=train_dataset[0],
+                                                                labels=train_dataset[1],
                                                                 max_outputs=6)
             callbacks.append(tensorboard_image_summary)
+
+            if validation_dataset:
+                tensorboard_image_summary = TensorBoardImageSummary("Validation",
+                                                                    self.log_dir_path,
+                                                                    images=validation_dataset[0],
+                                                                    labels=validation_dataset[1],
+                                                                    max_outputs=6)
+                callbacks.append(tensorboard_image_summary)
 
         return callbacks
 
