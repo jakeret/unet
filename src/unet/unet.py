@@ -8,7 +8,7 @@ from tensorflow.keras import losses
 from tensorflow.keras.initializers import TruncatedNormal
 from tensorflow.keras.optimizers import Adam
 
-from unet.metrics import MeanIoU
+from unet.metrics import MeanIoU, dice_coefficient
 
 
 def conv_block(layer_idx, filters_root, kernel_size, dropout_rate):
@@ -124,7 +124,9 @@ def finalize_model(model,
         optimizer = Adam(**opt_kwargs)
 
     if metrics is None:
-        metrics = ['categorical_crossentropy', 'categorical_accuracy']
+        metrics = ['categorical_crossentropy',
+                   'categorical_accuracy',
+                   dice_coefficient]
 
     if mean_iou:
         metrics += [MeanIoU(num_classes=num_classes)]
