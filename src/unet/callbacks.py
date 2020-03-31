@@ -10,7 +10,12 @@ from unet.utils import crop_to_shape, to_rgb
 
 class TensorBoardImageSummary(Callback):
 
-    def __init__(self, logdir:str, images:np.array, labels:np.array, max_outputs:int=None):
+    def __init__(self, name,
+                 logdir: str,
+                 images: np.array,
+                 labels: np.array,
+                 max_outputs: int = None):
+        self.name = name
         self.logdir = str(Path(logdir) / "summary")
         self.images = images
         self.labels = labels
@@ -31,7 +36,16 @@ class TensorBoardImageSummary(Callback):
                                 axis=2)
 
         with self.file_writer.as_default():
-            tf.summary.image("Training data", output, step=epoch, max_outputs=self.max_outputs)
+            tf.summary.image(self.name,
+                             output,
+                             step=epoch,
+                             max_outputs=self.max_outputs)
+
+            tf.summary.histogram(self.name + "_prediction_histograms",
+                                 prediction,
+                                 step=epoch,
+                                 buckets=30,
+                                 description=None)
 
 
 class TensorBoardWithLearningRate(TensorBoard):
