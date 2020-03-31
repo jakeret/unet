@@ -1,25 +1,21 @@
-from typing import Tuple
+from typing import Tuple, List
 
 import numpy as np
 
 channels = 1
 classes = 2
 
-def load_data(count:int, nx:int, ny:int, circles:int, split:int=0.2) \
-        -> Tuple[Tuple[np.array, np.array], Tuple[np.array, np.array]]:
 
-    train_sample_count = int(count * (1 - split))
-    test_sample_count = count - train_sample_count
-
-    return (_build_samples(train_sample_count, nx, ny, circles),
-            _build_samples(test_sample_count, nx, ny, circles))
+def load_data(count:int, splits:Tuple[float]=(0.7, 0.2, 0.1), **kwargs) -> List[Tuple[np.array, np.array]]:
+    return [_build_samples(int(split * count), **kwargs)
+            for split in splits]
 
 
-def _build_samples(sample_count:int, nx:int, ny:int, circles:int) -> Tuple[np.array, np.array]:
+def _build_samples(sample_count:int, nx:int, ny:int, **kwargs) -> Tuple[np.array, np.array]:
     images = np.empty((sample_count, nx, ny, 1))
     labels = np.empty((sample_count, nx, ny, 2))
     for i in range(sample_count):
-        image, mask = _create_image_and_mask(nx, ny, circles)
+        image, mask = _create_image_and_mask(nx, ny, **kwargs)
         images[i] = image
         labels[i, ..., 0] = ~mask
         labels[i, ..., 1] = mask
