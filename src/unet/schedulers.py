@@ -1,4 +1,5 @@
 import logging
+from enum import Enum
 from typing import Callable
 
 import tensorflow as tf
@@ -7,11 +8,14 @@ import tensorflow.keras.backend as K
 logger = logging.getLogger(__name__)
 
 
-WARMUP_LINEAR_DECAY = "warmup-linear-decay"
+class SchedulerType(Enum):
+    WARMUP_LINEAR_DECAY = "warmup-linear-decay"
 
 
-def get(scheduler:str, steps_per_epoch:int, learning_rate:float, **hyperparams):
-    if scheduler == WARMUP_LINEAR_DECAY:
+def get(scheduler:SchedulerType, train_dataset_size:int, learning_rate:float, **hyperparams):
+    if scheduler == SchedulerType.WARMUP_LINEAR_DECAY:
+        batch_size = hyperparams["batch_size"]
+        steps_per_epoch = (train_dataset_size + batch_size - 1) // batch_size
         total_steps = steps_per_epoch * hyperparams["epochs"]
         warmup_steps = int(total_steps * hyperparams["warmup_proportion"])
         logger.info("Total steps %s, warum steps %s", total_steps, warmup_steps)
