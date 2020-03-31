@@ -1,8 +1,14 @@
+from typing import Optional, Union, Callable, List
+
 import numpy as np
 import tensorflow as tf
 from tensorflow.keras import Model, Input
 from tensorflow.keras import layers
+from tensorflow.keras import losses
 from tensorflow.keras.initializers import TruncatedNormal
+from tensorflow.keras.optimizers import Adam
+
+from unet.metrics import MeanIoU
 
 
 def conv_block(layer_idx, filters_root, kernel_size, dropout_rate):
@@ -104,3 +110,26 @@ def build_model(channels:int,
     outputs = layers.Activation("softmax")(x)
     model = Model(inputs, outputs, name="unet")
     return model
+
+
+def finalize_model(model,
+                   loss: Optional[Union[Callable, str]]=losses.categorical_crossentropy,
+                   optimizer: Optional= None,
+                   metrics:Optional[List[Union[Callable,str]]]=None,
+                   mean_iou: bool=True,
+                   num_classes: Optional[int]=2,
+                   **opt_kwargs):
+
+    if optimizer is None:
+        optimizer = Adam(**opt_kwargs)
+
+    if metrics is None:
+        metrics = ['categorical_crossentropy', 'categorical_accuracy']
+
+    if mean_iou:
+        metrics += [MeanIoU(num_classes=num_classes)]
+
+    model.compile(loss=loss,
+                  optimizer=optimizer,
+                  metrics=metrics,
+                  )
