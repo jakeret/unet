@@ -48,7 +48,8 @@ class Trainer:
             validation_dataset: Optional[Tuple]=None,
             test_dataset: Optional[Tuple]=None,
             epochs=10,
-            batch_size=1):
+            batch_size=1,
+            **fit_kwargs):
 
         prediction_shape = self._get_prediction_shape(model, train_dataset)
 
@@ -69,7 +70,8 @@ class Trainer:
                                                                         prediction_shape),
                             epochs=epochs,
                             batch_size=batch_size,
-                            callbacks=callbacks)
+                            callbacks=callbacks,
+                            **fit_kwargs)
 
         self.evaluate(model, test_dataset, prediction_shape)
 
