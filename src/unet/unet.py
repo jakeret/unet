@@ -126,7 +126,8 @@ def finalize_model(model,
     if metrics is None:
         metrics = ['categorical_crossentropy',
                    'categorical_accuracy',
-                   dice_coefficient]
+                   dice_coefficient,
+                   tf.keras.metrics.AUC()]
 
     if mean_iou:
         metrics += [MeanIoU(num_classes=num_classes)]
