@@ -8,7 +8,7 @@ from tensorflow.keras import losses
 from tensorflow.keras.initializers import TruncatedNormal
 from tensorflow.keras.optimizers import Adam
 
-from unet.metrics import MeanIoU, dice_coefficient
+import unet.metrics
 
 
 def conv_block(layer_idx, filters_root, kernel_size, dropout_rate):
@@ -71,11 +71,23 @@ def crop_concat_block():
 
 def build_model(channels:int,
                 num_classes:int,
-                layer_depth:int,
-                filters_root:int,
-                kernel_size:int=3,
-                pool_size:int=2,
-                dropout_rate:int=0.5) -> Model:
+                layer_depth:int=5,
+                filters_root: int = 64,
+                kernel_size: int = 3,
+                pool_size: int = 2,
+                dropout_rate: int =0.5) -> Model:
+    """
+    Constructs a U-Net model
+
+    :param channels: number of channels of the input tensors
+    :param num_classes: number of classes
+    :param layer_depth: total depth of unet
+    :param filters_root: number of filters in top unet layer
+    :param kernel_size: size of convolutional layers
+    :param pool_size: size of maxplool layers
+    :param dropout_rate: rate of dropout
+    :return: A TF Keras model
+    """
 
     inputs = Input(shape=(None, None, channels))
 
@@ -107,30 +119,52 @@ def build_model(channels:int,
                       padding="valid"
                       )(x)
     x = layers.Activation("relu")(x)
-    outputs = layers.Activation("softmax")(x)
+    outputs = layers.Activation("softmax", name="outputs")(x)
     model = Model(inputs, outputs, name="unet")
+
     return model
 
 
-def finalize_model(model,
+def finalize_model(model: Model,
                    loss: Optional[Union[Callable, str]]=losses.categorical_crossentropy,
                    optimizer: Optional= None,
                    metrics:Optional[List[Union[Callable,str]]]=None,
+                   dice_coefficient: bool=True,
+                   auc: bool=True,
                    mean_iou: bool=True,
-                   num_classes: Optional[int]=2,
                    **opt_kwargs):
+    """
+    Configures the model for training by setting, loss, optimzer, and tracked metrics
+
+    :param model: the model to compile
+    :param loss: the loss to be optimized. Defaults to `categorical_crossentropy`
+    :param optimizer: the optimizer to use. Defaults to `Adam`
+    :param metrics: List of metrics to track. Is extended by `crossentropy` and `accuracy`
+    :param dice_coefficient: Flag if the dice coefficient metric should be tracked
+    :param auc: Flag if the area under the curve metric should be tracked
+    :param mean_iou: Flag if the mean over intersection over union metric should be tracked
+    :param opt_kwargs: key word arguments passed to default optimizer (Adam), e.g. learning rate
+    """
 
     if optimizer is None:
         optimizer = Adam(**opt_kwargs)
 
     if metrics is None:
-        metrics = ['categorical_crossentropy',
-                   'categorical_accuracy',
-                   dice_coefficient,
-                   tf.keras.metrics.AUC()]
+        metrics = []
+
+    metrics += ['categorical_crossentropy',
+                'categorical_accuracy',
+                ]
 
     if mean_iou:
-        metrics += [MeanIoU(num_classes=num_classes)]
+        num_classes = model.get_layer("outputs").output.shape[-1]
+        metrics += [unet.metrics.MeanIoU(num_classes=num_classes)]
+
+    if dice_coefficient:
+        metrics += [unet.metrics.dice_coefficient]
+
+    if auc:
+        metrics += [tf.keras.metrics.AUC()]
 
     model.compile(loss=loss,
                   optimizer=optimizer,

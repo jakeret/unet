@@ -29,21 +29,22 @@ def train():
                                   layer_depth=3,
                                   filters_root=16)
 
-    unet.finalize_model(unet_model, num_classes=circles.classes, learning_rate=LEARNING_RATE)
+    unet.finalize_model(unet_model,
+                        learning_rate=LEARNING_RATE)
 
     trainer = unet.Trainer(name="circles",
                            learning_rate_scheduler=unet.SchedulerType.WARMUP_LINEAR_DECAY,
-                           scheduler_opts=dict(warmup_proportion=0.1,
-                                               learning_rate=LEARNING_RATE))
+                           warmup_proportion=0.1,
+                           learning_rate=LEARNING_RATE)
 
-    train_dataset, validation_dataset, test_dataset = circles.load_data(100, nx=172, ny=172)
+    train_dataset, validation_dataset, test_dataset = circles.load_data(100, nx=272, ny=272, r_max=20)
 
     trainer.fit(unet_model,
                 train_dataset,
                 validation_dataset,
                 test_dataset,
-                epochs=1,
-                batch_size=1)
+                epochs=25,
+                batch_size=5)
 
     return unet_model
 

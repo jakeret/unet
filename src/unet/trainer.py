@@ -1,6 +1,6 @@
 from datetime import datetime
 from pathlib import Path
-from typing import Union, List, Optional, Tuple, Dict
+from typing import Union, List, Optional, Tuple
 
 from tensorflow.keras import Model
 from tensorflow.keras.callbacks import Callback
@@ -12,27 +12,39 @@ from unet.schedulers import SchedulerType
 
 
 class Trainer:
+    """
+    Fits a given model to a datasets and configres learning rate schedulers and
+    various callbacks
+
+    :param name: Name of the model, used to build the target log directory if no explicit path is given
+    :param log_dir_path: Path to the directory where the model and tensorboard summaries should be stored
+    :param checkpoint_callback: Flag if checkpointing should be enabled. Alternatively a callback
+    instance can be passed
+    :param tensorboard_callback: Flag if information should be stored for tensorboard.
+    Alternatively a callback instance can be passed
+    :param tensorboard_images_callback: Flag if intermediate predictions should be stored in Tensorboard.
+    Alternatively a callback instance can be passed
+    :param callbacks: List of additional callbacks
+    :param learning_rate_scheduler: The learning rate to be used. Either None for a constant
+    learning rate, a `Callback` or a `SchedulerType`
+    :param scheduler_opts: Further kwargs passed to the learning rate scheduler
+    """
 
     def __init__(self,
                  name: Optional[str]="unet",
                  log_dir_path: Optional[Union[Path, str]]=None,
                  checkpoint_callback: Optional[Union[TensorBoard, bool]] = True,
                  tensorboard_callback: Optional[Union[TensorBoard, bool]] = True,
-                 tensorboard_images_callback: Optional[Union[TensorBoard, bool]] = True,
+                 tensorboard_images_callback: Optional[Union[TensorBoardImageSummary, bool]] = True,
                  callbacks: Union[List[Callback], None]=None,
                  learning_rate_scheduler: Optional[Union[SchedulerType, Callback]]=None,
-                 scheduler_opts: Optional[Dict]=None,
+                 **scheduler_opts,
                  ):
-
         self.checkpoint_callback = checkpoint_callback
         self.tensorboard_callback = tensorboard_callback
         self.tensorboard_images_callback = tensorboard_images_callback
         self.callbacks = callbacks
         self.learning_rate_scheduler = learning_rate_scheduler
-
-        if scheduler_opts is None:
-            scheduler_opts = {}
-
         self.scheduler_opts=scheduler_opts
 
         if log_dir_path is None:
@@ -50,6 +62,17 @@ class Trainer:
             epochs=10,
             batch_size=1,
             **fit_kwargs):
+        """
+        Fits the model to the given data
+
+        :param model: The model to be fit
+        :param train_dataset: The dataset used for training
+        :param validation_dataset: (Optional) The dataset used for validation
+        :param test_dataset:  (Optional) The dataset used for test
+        :param epochs: Number of epochs
+        :param batch_size: Size of minibatches
+        :param fit_kwargs: Further kwargs passd to `model.fit`
+        """
 
         prediction_shape = self._get_prediction_shape(model, train_dataset)
 
@@ -108,7 +131,7 @@ class Trainer:
 
         if isinstance(self.tensorboard_callback, Callback):
             callbacks.append(self.tensorboard_callback)
-        elif self.checkpoint_callback:
+        elif self.tensorboard_callback:
             callbacks.append(TensorBoardWithLearningRate(self.log_dir_path))
 
         if isinstance(self.tensorboard_images_callback, Callback):
