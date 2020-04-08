@@ -2,9 +2,9 @@
 Tensorflow Unet
 =============================
 
-.. image:: https://readthedocs.org/projects/tf-unet/badge/?version=latest
-	:target: http://unet.readthedocs.io/en/latest/?badge=latest
-	:alt: Documentation Status
+.. image:: https://readthedocs.org/projects/u-net/badge/?version=latest
+        :target: https://u-net.readthedocs.io/en/latest/?badge=latest
+        :alt: Documentation Status
 
 .. image:: http://img.shields.io/badge/arXiv-1609.09077-orange.svg?style=flat
         :target: http://arxiv.org/abs/1609.09077
