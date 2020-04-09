@@ -17,16 +17,17 @@ class TensorBoardImageSummary(Callback):
                  max_outputs: int = None):
         self.name = name
         self.logdir = str(Path(logdir) / "summary")
-        self.images = images
-        self.labels = labels
         if max_outputs is None:
             max_outputs = self.images.shape[0]
         self.max_outputs = max_outputs
+
+        self.images = images[:self.max_outputs]
+        self.labels = labels[:self.max_outputs]
         self.file_writer = tf.summary.create_file_writer(self.logdir)
         super().__init__()
 
     def on_epoch_end(self, epoch, logs=None):
-        prediction = self.model.predict(self.images)
+        prediction = self.model.predict(self.images, batch_size=1)
         cropped_images = crop_to_shape(self.images, prediction.shape)
         cropped_labels = crop_to_shape(self.labels, prediction.shape)
 
