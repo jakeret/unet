@@ -2,8 +2,8 @@ from pathlib import Path
 
 import numpy as np
 import tensorflow as tf
+from tensorflow.keras import backend as K
 from tensorflow.keras.callbacks import TensorBoard, Callback
-from tensorflow_core.python.keras.api._v2.keras import backend as K
 
 from unet.utils import crop_to_shape, to_rgb
 
