@@ -17,7 +17,7 @@ def _build_dataset(items=5, image_shape=(10, 10, 3), label_shape=(10, 10, 2)):
 
 class TestTrainer:
 
-    def test_fit(self):
+    def test_fit(self, tmp_path):
         output_shape = (8, 8, 2)
         image_shape = (10, 10, 3)
         epochs = 5
@@ -29,6 +29,7 @@ class TestTrainer:
 
         mock_callback = Mock()
         trainer = unet.Trainer(name="test",
+                               log_dir_path=str(tmp_path),
                                checkpoint_callback=True,
                                tensorboard_callback=True,
                                tensorboard_images_callback=True,
