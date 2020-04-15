@@ -6,6 +6,9 @@ Tensorflow Unet
         :target: https://u-net.readthedocs.io/en/latest/?badge=latest
         :alt: Documentation Status
 
+.. image:: https://travis-ci.com/jakeret/unet.svg?branch=master
+    :target: https://travis-ci.com/jakeret/unet
+
 .. image:: http://img.shields.io/badge/arXiv-1609.09077-orange.svg?style=flat
         :target: http://arxiv.org/abs/1609.09077
 
