@@ -69,16 +69,20 @@ def crop_concat_block():
     return block
 
 
-def build_model(channels:int,
-                num_classes:int,
-                layer_depth:int=5,
+def build_model(nx: Optional[int] = None,
+                ny: Optional[int] = None,
+                channels: int = 1,
+                num_classes: int = 2,
+                layer_depth: int = 5,
                 filters_root: int = 64,
                 kernel_size: int = 3,
                 pool_size: int = 2,
-                dropout_rate: int =0.5) -> Model:
+                dropout_rate: int = 0.5) -> Model:
     """
     Constructs a U-Net model
 
+    :param nx: (Optional) image size on x-axis
+    :param ny: (Optional) image size on y-axis
     :param channels: number of channels of the input tensors
     :param num_classes: number of classes
     :param layer_depth: total depth of unet
@@ -89,7 +93,7 @@ def build_model(channels:int,
     :return: A TF Keras model
     """
 
-    inputs = Input(shape=(None, None, channels))
+    inputs = Input(shape=(nx, ny, channels), name="inputs")
 
     x = inputs
     down_layers = {}
@@ -157,8 +161,7 @@ def finalize_model(model: Model,
                 ]
 
     if mean_iou:
-        num_classes = model.get_layer("outputs").output.shape[-1]
-        metrics += [unet.metrics.MeanIoU(num_classes=num_classes)]
+        metrics += [unet.metrics.mean_iou]
 
     if dice_coefficient:
         metrics += [unet.metrics.dice_coefficient]

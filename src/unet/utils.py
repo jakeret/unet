@@ -1,12 +1,14 @@
+from typing import Tuple
+
 import numpy as np
 
 
-def crop_to_shape(data, shape):
+def crop_to_shape(data, shape: Tuple[int, int, int]):
     """
-    Crops the array to the given image shape by removing the border (expects a tensor of shape [batches, nx, ny, channels].
+    Crops the array to the given image shape by removing the border
 
-    :param data: the array to crop
-    :param shape: the target shape
+    :param data: the array to crop, expects a tensor of shape [batches, nx, ny, channels]
+    :param shape: the target shape [batches, nx, ny, channels]
     """
     diff_nx = (data.shape[0] - shape[0])
     diff_ny = (data.shape[1] - shape[1])
@@ -23,13 +25,13 @@ def crop_to_shape(data, shape):
     return cropped
 
 
-def crop_labels_to_shape(shape):
+def crop_labels_to_shape(shape: Tuple[int, int, int]):
     def crop(image, label):
         return image, crop_to_shape(label, shape)
     return crop
 
 
-def crop_image_and_label_to_shape(shape):
+def crop_image_and_label_to_shape(shape: Tuple[int, int, int]):
     def crop(image, label):
         return crop_to_shape(image, shape), \
                crop_to_shape(label, shape)

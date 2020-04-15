@@ -75,7 +75,7 @@ class Trainer:
         :param fit_kwargs: Further kwargs passd to `model.fit`
         """
 
-        prediction_shape = self._get_prediction_shape(model, train_dataset)[1:]
+        prediction_shape = self._get_output_shape(model, train_dataset)[1:]
 
         learning_rate_scheduler = self._build_learning_rate_scheduler(train_dataset=train_dataset,
                                                                       batch_size=batch_size,
@@ -103,9 +103,9 @@ class Trainer:
 
         return history
 
-    def _get_prediction_shape(self,
-                              model: Model,
-                              train_dataset: tf.data.Dataset):
+    def _get_output_shape(self,
+                          model: Model,
+                          train_dataset: tf.data.Dataset):
         return model.predict(train_dataset
                              .take(count=1)
                              .batch(batch_size=1)
@@ -171,7 +171,7 @@ class Trainer:
     def evaluate(self,
                  model:Model,
                  test_dataset: Optional[tf.data.Dataset]=None,
-                 shape:Tuple[int, int]=None):
+                 shape:Tuple[int, int, int]=None):
 
         if test_dataset:
             model.evaluate(test_dataset

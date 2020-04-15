@@ -4,6 +4,7 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
+pytest = "*"
 matplotlib = "==3.2.0"
 seaborn = "==0.10.0"
 jupyterlab = "==2.0.1"
