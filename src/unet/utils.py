@@ -8,19 +8,32 @@ def crop_to_shape(data, shape):
     :param data: the array to crop
     :param shape: the target shape
     """
-    diff_nx = (data.shape[1] - shape[1])
-    diff_ny = (data.shape[2] - shape[2])
+    diff_nx = (data.shape[0] - shape[0])
+    diff_ny = (data.shape[1] - shape[1])
 
     offset_nx_left = diff_nx // 2
     offset_nx_right = diff_nx - offset_nx_left
     offset_ny_left = diff_ny // 2
     offset_ny_right = diff_ny - offset_ny_left
 
-    cropped = data[:, offset_nx_left:(-offset_nx_right), offset_ny_left:(-offset_ny_right)]
+    cropped = data[offset_nx_left:(-offset_nx_right), offset_ny_left:(-offset_ny_right)]
 
+    assert cropped.shape[0] == shape[0]
     assert cropped.shape[1] == shape[1]
-    assert cropped.shape[2] == shape[2]
     return cropped
+
+
+def crop_labels_to_shape(shape):
+    def crop(image, label):
+        return image, crop_to_shape(label, shape)
+    return crop
+
+
+def crop_image_and_label_to_shape(shape):
+    def crop(image, label):
+        return crop_to_shape(image, shape), \
+               crop_to_shape(label, shape)
+    return crop
 
 
 def to_rgb(img):

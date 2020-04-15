@@ -1,13 +1,14 @@
 from typing import Tuple, List
 
 import numpy as np
+import tensorflow as tf
 
 channels = 1
 classes = 2
 
 
-def load_data(count:int, splits:Tuple[float]=(0.7, 0.2, 0.1), **kwargs) -> List[Tuple[np.array, np.array]]:
-    return [_build_samples(int(split * count), **kwargs)
+def load_data(count:int, splits:Tuple[float]=(0.7, 0.2, 0.1), **kwargs) -> List[tf.data.Dataset]:
+    return [tf.data.Dataset.from_tensor_slices(_build_samples(int(split * count), **kwargs))
             for split in splits]
 
 
