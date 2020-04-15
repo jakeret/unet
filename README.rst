@@ -15,12 +15,16 @@ Tensorflow Unet
 .. image:: https://mybinder.org/badge.svg
         :target: https://mybinder.org/v2/gh/jakeret/unet/master?filepath=notebooks%2Fcicles.ipynb
 
+.. image:: https://img.shields.io/badge/colab-unet-orange.svg?style=flat
+        :target: https://colab.research.google.com/drive/1BArjvM_DiPlEfMjVRjlkz4JF2-7movLK
+
+
 
 This is a generic **U-Net** implementation as proposed by `Ronneberger et al. <https://arxiv.org/pdf/1505.04597.pdf>`_ developed with **Tensorflow 2** and is a reimplementation of the original `tf_unet <https://github.com/jakeret/tf_unet>`_.
 
 The original code was developed and used for `Radio Frequency Interference mitigation using deep convolutional neural networks <http://arxiv.org/abs/1609.09077>`_ .
 
-The network can be trained to perform image segmentation on arbitrary imaging data. Checkout the `Usage <http://unet.readthedocs.io/en/latest/usage.html>`_ section or the included Jupyter notebooks for a `toy problem <https://github.com/jakeret/unet/blob/master/notebooks/circles.ipynb>`_ .
+The network can be trained to perform image segmentation on arbitrary imaging data. Checkout the `Usage <http://u-net.readthedocs.io/en/latest/usage.html>`_ section or the included Jupyter notebooks for a `toy problem <https://github.com/jakeret/unet/blob/master/notebooks/circles.ipynb>`_ .
 
 The code is not tied to a specific segmentation such that it can be used in a toy problem to detect circles in a noisy image.
 
