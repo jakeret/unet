@@ -9,7 +9,7 @@ Contents
 
    installation
    usage
-   Module Reference <unet>
+   Module Reference <api/unet>
    contributing
    Authors <authors>
    Changelog <changelog>
