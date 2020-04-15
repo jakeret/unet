@@ -11,8 +11,8 @@ sphinx = "==3.0.0"
 unet = {editable = true,path = "."}
 
 [packages]
-tensorflow = "==2.1.0"
-numpy = "==1.18.1"
+tensorflow = ">=2.1.0"
+numpy = ">=1.18.1"
 
 [requires]
 python_version = "3.7"
