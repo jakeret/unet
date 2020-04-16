@@ -48,7 +48,9 @@ def to_rgb(img):
 
     :returns img: the rgb image [nx, ny, 3]
     """
-    img = np.atleast_3d(img)
+    img:np.array = np.atleast_3d(img)
+
+    img = img.copy()
     channels = img.shape[-1]
     if channels < 3:
         img = np.tile(img, 3)

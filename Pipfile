@@ -10,6 +10,7 @@ seaborn = "==0.10.0"
 jupyterlab = "==2.0.1"
 sphinx = "==3.0.0"
 unet = {editable = true,path = "."}
+tensorflow-datasets = ">=2.1.0"
 
 [packages]
 tensorflow = ">=2.1.0"

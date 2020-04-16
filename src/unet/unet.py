@@ -154,11 +154,9 @@ def finalize_model(model: Model,
         optimizer = Adam(**opt_kwargs)
 
     if metrics is None:
-        metrics = []
-
-    metrics += ['categorical_crossentropy',
-                'categorical_accuracy',
-                ]
+        metrics = ['categorical_crossentropy',
+                   'categorical_accuracy',
+                   ]
 
     if mean_iou:
         metrics += [unet.metrics.mean_iou]
