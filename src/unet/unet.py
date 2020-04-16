@@ -11,7 +11,7 @@ from tensorflow.keras.optimizers import Adam
 import unet.metrics
 
 
-def conv_block(layer_idx, filters_root, kernel_size, dropout_rate):
+def conv_block(layer_idx, filters_root, kernel_size, dropout_rate, padding="valid", activation="relu"):
     def block(x):
         filters = 2 ** layer_idx * filters_root
         stddev = np.sqrt(2 / (kernel_size ** 2 * filters))
@@ -20,23 +20,23 @@ def conv_block(layer_idx, filters_root, kernel_size, dropout_rate):
                           kernel_size=(kernel_size, kernel_size),
                           kernel_initializer=TruncatedNormal(stddev=stddev),
                           strides=1,
-                          padding="valid")(x)
+                          padding=padding)(x)
         x = layers.Dropout(rate=dropout_rate)(x)
-        x = layers.Activation("relu")(x)
+        x = layers.Activation(activation)(x)
 
         x = layers.Conv2D(filters=filters,
                           kernel_size=(kernel_size, kernel_size),
                           strides=1,
-                          padding="valid")(x)
+                          padding=padding)(x)
         x = layers.Dropout(rate=dropout_rate)(x)
-        x = layers.Activation("relu")(x)
+        x = layers.Activation(activation)(x)
 
         return x
 
     return block
 
 
-def upconv_block(layer_idx, filters_root, kernel_size, pool_size):
+def upconv_block(layer_idx, filters_root, kernel_size, pool_size, padding="valid", activation="relu"):
     def block(x):
         filters = 2 ** (layer_idx + 1) * filters_root
         stddev = np.sqrt(2 / (kernel_size ** 2 * filters))
@@ -44,9 +44,10 @@ def upconv_block(layer_idx, filters_root, kernel_size, pool_size):
                                    kernel_size=(pool_size, pool_size),
                                    kernel_initializer=TruncatedNormal(stddev=stddev),
                                    strides=pool_size,
-                                   padding="valid"
+                                   padding=padding
                                    )(x)
-        x = layers.Activation("relu")(x)
+        x = layers.Activation(activation
+                              )(x)
 
         return x
 
@@ -61,7 +62,7 @@ def crop_concat_block():
         height_diff = (x1_shape[1] - x2_shape[1]) // 2
         width_diff = (x1_shape[2] - x2_shape[2]) // 2
 
-        down_layer_cropped = down_layer[:, height_diff: -height_diff, width_diff: -width_diff, :]
+        down_layer_cropped = down_layer[:, height_diff: (x1_shape[1]-height_diff), width_diff: (x1_shape[2]-width_diff), :]
 
         x = tf.concat([down_layer_cropped, x], axis=-1)
         return x
@@ -77,7 +78,9 @@ def build_model(nx: Optional[int] = None,
                 filters_root: int = 64,
                 kernel_size: int = 3,
                 pool_size: int = 2,
-                dropout_rate: int = 0.5) -> Model:
+                dropout_rate: int = 0.5,
+                padding:str="valid",
+                activation:Union[str, Callable]="relu") -> Model:
     """
     Constructs a U-Net model
 
@@ -90,6 +93,9 @@ def build_model(nx: Optional[int] = None,
     :param kernel_size: size of convolutional layers
     :param pool_size: size of maxplool layers
     :param dropout_rate: rate of dropout
+    :param padding: padding to be used in convolutions
+    :param activation: activation to be used
+
     :return: A TF Keras model
     """
 
@@ -101,28 +107,28 @@ def build_model(nx: Optional[int] = None,
     with tf.name_scope("contracting"):
         for layer_idx in range(0, layer_depth - 1):
             with tf.name_scope(f"contracting_{layer_idx}"):
-                x = conv_block(layer_idx, filters_root, kernel_size, dropout_rate)(x)
+                x = conv_block(layer_idx, filters_root, kernel_size, dropout_rate, padding, activation)(x)
                 down_layers[layer_idx] = x
                 x = layers.MaxPooling2D((pool_size, pool_size))(x)
 
     with tf.name_scope("bottom"):
-        x = conv_block(layer_idx + 1, filters_root, kernel_size, dropout_rate)(x)
+        x = conv_block(layer_idx + 1, filters_root, kernel_size, dropout_rate, padding, activation)(x)
 
     with tf.name_scope("expanding"):
         for layer_idx in range(layer_depth - 2, -1, -1):
             with tf.name_scope(f"expanding_{layer_idx}"):
-                x = upconv_block(layer_idx, filters_root, kernel_size, pool_size)(x)
+                x = upconv_block(layer_idx, filters_root, kernel_size, pool_size, padding, activation)(x)
                 x = crop_concat_block()(x, down_layers[layer_idx])
-                x = conv_block(layer_idx, filters_root, kernel_size, dropout_rate)(x)
+                x = conv_block(layer_idx, filters_root, kernel_size, dropout_rate, padding, activation)(x)
 
     stddev = np.sqrt(2 / (kernel_size ** 2 * filters_root * 2))
     x = layers.Conv2D(filters=num_classes,
                       kernel_size=(1, 1),
                       kernel_initializer=TruncatedNormal(stddev=stddev),
                       strides=1,
-                      padding="valid"
+                      padding=padding
                       )(x)
-    x = layers.Activation("relu")(x)
+    x = layers.Activation(activation)(x)
     outputs = layers.Activation("softmax", name="outputs")(x)
     model = Model(inputs, outputs, name="unet")
 

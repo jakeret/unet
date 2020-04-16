@@ -13,6 +13,9 @@ def crop_to_shape(data, shape: Tuple[int, int, int]):
     diff_nx = (data.shape[0] - shape[0])
     diff_ny = (data.shape[1] - shape[1])
 
+    if diff_nx == 0 and diff_ny == 0:
+        return data
+
     offset_nx_left = diff_nx // 2
     offset_nx_right = diff_nx - offset_nx_left
     offset_ny_left = diff_ny // 2

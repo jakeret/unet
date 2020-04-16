@@ -25,10 +25,13 @@ np.random.seed(98765)
 
 
 def train():
-    unet_model = unet.build_model(channels=oxford_iiit_pet.channels,
+    unet_model = unet.build_model(*oxford_iiit_pet.IMAGE_SIZE,
+                                  channels=oxford_iiit_pet.channels,
                                   num_classes=oxford_iiit_pet.classes,
                                   layer_depth=3,
-                                  filters_root=16)
+                                  filters_root=16,
+                                  padding="same"
+                                  )
 
     unet.finalize_model(unet_model,
                         loss=losses.SparseCategoricalCrossentropy(from_logits=True),
@@ -36,6 +39,7 @@ def train():
                                  metrics.SparseCategoricalAccuracy()],
                         auc=False,
                         learning_rate=LEARNING_RATE)
+    print(unet_model.summary())
 
     trainer = unet.Trainer(name="oxford_iiit_pet",
                            # learning_rate_scheduler=unet.SchedulerType.WARMUP_LINEAR_DECAY,
