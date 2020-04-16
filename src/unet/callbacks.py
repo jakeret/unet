@@ -35,9 +35,14 @@ class TensorBoardImageSummary(Callback):
                                               .take(self.max_outputs)
                                               .batch(self.max_outputs))[0]
 
+        if prediction_shape[-1] == 2:
+            prediction = prediction[..., :1]
+        else:
+            prediction = np.argmax(prediction, axis=-1)[..., np.newaxis]
+
         output = np.concatenate((utils.to_rgb(cropped_images),
                                  utils.to_rgb(cropped_labels[..., :1]),
-                                 utils.to_rgb(prediction[..., :1])),
+                                 utils.to_rgb(prediction)),
                                 axis=2)
 
         with self.file_writer.as_default():
