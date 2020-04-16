@@ -26,9 +26,9 @@ class TensorBoardImageSummary(Callback):
         super().__init__()
 
     def on_epoch_end(self, epoch, logs=None):
-        prediction = self.model.predict(self.dataset.batch(batch_size=1))
+        predictions = self.model.predict(self.dataset.batch(batch_size=1))
 
-        prediction_shape = prediction.shape[1:]
+        prediction_shape = predictions.shape[1:]
 
         cropped_images, cropped_labels = list(self.dataset
                                               .map(utils.crop_image_and_label_to_shape(prediction_shape))
@@ -36,13 +36,15 @@ class TensorBoardImageSummary(Callback):
                                               .batch(self.max_outputs))[0]
 
         if prediction_shape[-1] == 2:
-            prediction = prediction[..., :1]
+            predictions = predictions[..., :1]
+            predictions = utils.to_rgb(predictions)
         else:
-            prediction = np.argmax(prediction, axis=-1)[..., np.newaxis]
+            predictions = np.argmax(predictions, axis=-1)[..., np.newaxis]
+            predictions = np.tile(predictions, 3)
 
         output = np.concatenate((utils.to_rgb(cropped_images),
                                  utils.to_rgb(cropped_labels[..., :1]),
-                                 utils.to_rgb(prediction)),
+                                 predictions),
                                 axis=2)
 
         with self.file_writer.as_default():
@@ -52,7 +54,7 @@ class TensorBoardImageSummary(Callback):
                              max_outputs=self.max_outputs)
 
             tf.summary.histogram(self.name + "_prediction_histograms",
-                                 prediction,
+                                 predictions,
                                  step=epoch,
                                  buckets=30,
                                  description=None)
