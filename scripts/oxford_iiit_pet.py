@@ -45,8 +45,8 @@ def train():
     train_dataset, validation_dataset = oxford_iiit_pet.load_data()
 
     trainer.fit(unet_model,
-                train_dataset.take(50),
-                validation_dataset.take(50),
+                train_dataset,
+                validation_dataset,
                 epochs=25,
                 batch_size=1)
 
