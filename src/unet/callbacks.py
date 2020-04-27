@@ -15,7 +15,7 @@ class TensorBoardImageSummary(Callback):
                  dataset: tf.data.Dataset,
                  max_outputs: int = None):
         self.name = name
-        self.logdir = str(Path(logdir) / "summary")
+        self.logdir = str(Path(logdir) / name)
         if max_outputs is None:
             max_outputs = self.images.shape[0]
         self.max_outputs = max_outputs
@@ -23,28 +23,30 @@ class TensorBoardImageSummary(Callback):
         self.dataset = dataset.take(self.max_outputs)
 
         self.file_writer = tf.summary.create_file_writer(self.logdir)
+
         super().__init__()
 
     def on_epoch_end(self, epoch, logs=None):
         predictions = self.model.predict(self.dataset.batch(batch_size=1))
 
-        prediction_shape = predictions.shape[1:]
+        self._log_histogramms(epoch, predictions)
 
+        self._log_image_summaries(epoch, predictions)
+
+    def _log_image_summaries(self, epoch, predictions):
         cropped_images, cropped_labels = list(self.dataset
-                                              .map(utils.crop_image_and_label_to_shape(prediction_shape))
+                                              .map(utils.crop_image_and_label_to_shape(predictions.shape[1:]))
                                               .take(self.max_outputs)
                                               .batch(self.max_outputs))[0]
+        if predictions.shape[-1] == 2:
+            mask = predictions[..., :1]
 
-        if prediction_shape[-1] == 2:
-            predictions = predictions[..., :1]
-            predictions = utils.to_rgb(predictions)
         else:
-            predictions = np.argmax(predictions, axis=-1)[..., np.newaxis]
-            predictions = np.tile(predictions, 3)
+            mask = np.argmax(predictions, axis=-1)[..., np.newaxis]
 
-        output = np.concatenate((utils.to_rgb(cropped_images),
-                                 utils.to_rgb(cropped_labels[..., :1]),
-                                 predictions),
+        output = np.concatenate((utils.to_rgb(cropped_images.numpy()),
+                                 utils.to_rgb(cropped_labels[..., :1].numpy()),
+                                 utils.to_rgb(mask)),
                                 axis=2)
 
         with self.file_writer.as_default():
@@ -53,6 +55,8 @@ class TensorBoardImageSummary(Callback):
                              step=epoch,
                              max_outputs=self.max_outputs)
 
+    def _log_histogramms(self, epoch, predictions):
+        with self.file_writer.as_default():
             tf.summary.histogram(self.name + "_prediction_histograms",
                                  predictions,
                                  step=epoch,
