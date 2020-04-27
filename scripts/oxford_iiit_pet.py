@@ -28,8 +28,8 @@ def train():
     unet_model = unet.build_model(*oxford_iiit_pet.IMAGE_SIZE,
                                   channels=oxford_iiit_pet.channels,
                                   num_classes=oxford_iiit_pet.classes,
-                                  layer_depth=3,
-                                  filters_root=16,
+                                  layer_depth=4,
+                                  filters_root=64,
                                   padding="same"
                                   )
 
@@ -39,12 +39,8 @@ def train():
                                  metrics.SparseCategoricalAccuracy()],
                         auc=False,
                         learning_rate=LEARNING_RATE)
-    print(unet_model.summary())
 
-    trainer = unet.Trainer(name="oxford_iiit_pet",
-                           # learning_rate_scheduler=unet.SchedulerType.WARMUP_LINEAR_DECAY,
-                           warmup_proportion=0.1,
-                           learning_rate=LEARNING_RATE)
+    trainer = unet.Trainer(name="oxford_iiit_pet")
 
     train_dataset, validation_dataset = oxford_iiit_pet.load_data()
 
