@@ -15,7 +15,7 @@ class TensorBoardImageSummary(Callback):
                  dataset: tf.data.Dataset,
                  max_outputs: int = None):
         self.name = name
-        self.logdir = str(Path(logdir) / name)
+        self.logdir = str(Path(logdir) / "summaries")
         if max_outputs is None:
             max_outputs = self.images.shape[0]
         self.max_outputs = max_outputs
