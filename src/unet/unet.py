@@ -46,8 +46,8 @@ def upconv_block(layer_idx, filters_root, kernel_size, pool_size, padding="valid
                                    strides=pool_size,
                                    padding=padding
                                    )(x)
-        x = layers.Activation(activation
-                              )(x)
+
+        x = layers.Activation(activation)(x)
 
         return x
 

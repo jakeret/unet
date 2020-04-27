@@ -34,8 +34,8 @@ def train():
                                   )
 
     unet.finalize_model(unet_model,
-                        loss=losses.SparseCategoricalCrossentropy(from_logits=True),
-                        metrics=[metrics.SparseCategoricalCrossentropy(from_logits=True),
+                        loss=losses.SparseCategoricalCrossentropy(from_logits=False),
+                        metrics=[metrics.SparseCategoricalCrossentropy(from_logits=False),
                                  metrics.SparseCategoricalAccuracy()],
                         auc=False,
                         learning_rate=LEARNING_RATE)
@@ -49,8 +49,8 @@ def train():
     train_dataset, validation_dataset = oxford_iiit_pet.load_data()
 
     trainer.fit(unet_model,
-                train_dataset,
-                validation_dataset,
+                train_dataset.take(50),
+                validation_dataset.take(50),
                 epochs=25,
                 batch_size=1)
 

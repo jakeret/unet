@@ -133,14 +133,14 @@ class Trainer:
         if isinstance(self.tensorboard_images_callback, Callback):
             callbacks.append(self.tensorboard_images_callback)
         elif self.tensorboard_images_callback:
-            tensorboard_image_summary = TensorBoardImageSummary("Train",
+            tensorboard_image_summary = TensorBoardImageSummary("train",
                                                                 self.log_dir_path,
                                                                 dataset=train_dataset,
                                                                 max_outputs=6)
             callbacks.append(tensorboard_image_summary)
 
             if validation_dataset:
-                tensorboard_image_summary = TensorBoardImageSummary("Validation",
+                tensorboard_image_summary = TensorBoardImageSummary("validation",
                                                                     self.log_dir_path,
                                                                     dataset=validation_dataset,
                                                                     max_outputs=6)
