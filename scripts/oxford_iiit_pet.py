@@ -34,7 +34,7 @@ def train():
                                   )
 
     unet.finalize_model(unet_model,
-                        loss=losses.SparseCategoricalCrossentropy(from_logits=False),
+                        loss=losses.SparseCategoricalCrossentropy(),
                         metrics=[metrics.SparseCategoricalAccuracy()],
                         auc=False,
                         learning_rate=LEARNING_RATE)
