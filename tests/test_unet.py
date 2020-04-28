@@ -70,5 +70,5 @@ def test_finalize_model(AdamMock:Mock):
     assert kwargs["optimizer"] == adam_instance
 
     metrics = kwargs["metrics"]
-    assert len(metrics) == 6
+    assert len(metrics) == 4
     assert metrics[0] == metric_mock

@@ -13,6 +13,9 @@ def crop_to_shape(data, shape: Tuple[int, int, int]):
     diff_nx = (data.shape[0] - shape[0])
     diff_ny = (data.shape[1] - shape[1])
 
+    if diff_nx == 0 and diff_ny == 0:
+        return data
+
     offset_nx_left = diff_nx // 2
     offset_nx_right = diff_nx - offset_nx_left
     offset_ny_left = diff_ny // 2
@@ -38,7 +41,7 @@ def crop_image_and_label_to_shape(shape: Tuple[int, int, int]):
     return crop
 
 
-def to_rgb(img):
+def to_rgb(img: np.array):
     """
     Converts the given array into a RGB image. If the number of channels is not
     3 the array is tiled such that it has 3 channels. Finally, the values are
@@ -48,7 +51,9 @@ def to_rgb(img):
 
     :returns img: the rgb image [nx, ny, 3]
     """
+    img = img.astype(np.float32)
     img = np.atleast_3d(img)
+
     channels = img.shape[-1]
     if channels < 3:
         img = np.tile(img, 3)
