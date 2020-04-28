@@ -22,7 +22,7 @@ This is a generic **U-Net** implementation as proposed by `Ronneberger et al. <h
 
 Originally, the code was developed and used for `Radio Frequency Interference mitigation using deep convolutional neural networks <http://arxiv.org/abs/1609.09077>`_ .
 
-The network can be trained to perform image segmentation on arbitrary imaging data. Checkout the `Usage <http://u-net.readthedocs.io/en/latest/usage.html>`_ section, the included Jupyter notebooks for a `toy problem <https://github.com/jakeret/unet/blob/master/notebooks/circles.ipynb>`_ or the Oxford Pet Segmentaiton example available on `Google Colab <https://colab.research.google.com/drive/1laPoOaGcqEBB3jTvb-pGnmDU21zwtgJB>`_.
+The network can be trained to perform image segmentation on arbitrary imaging data. Checkout the `Usage <http://u-net.readthedocs.io/en/latest/usage.html>`_ section, the included `Jupyter notebooks <https://github.com/jakeret/unet/blob/master/notebooks/circles.ipynb>`_  or `on Google Colab <https://colab.research.google.com/drive/1BArjvM_DiPlEfMjVRjlkz4JF2-7movLK>`_ for a toy problem or the Oxford Pet Segmentation example available on `Google Colab <https://colab.research.google.com/drive/1laPoOaGcqEBB3jTvb-pGnmDU21zwtgJB>`_.
 
 The code is not tied to a specific segmentation such that it can be used in a toy problem to detect circles in a noisy image.
 
