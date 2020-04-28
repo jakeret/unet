@@ -12,22 +12,17 @@ Tensorflow Unet
 .. image:: http://img.shields.io/badge/arXiv-1609.09077-orange.svg?style=flat
         :target: http://arxiv.org/abs/1609.09077
 
-.. image:: https://img.shields.io/badge/ascl-1611.002-blue.svg?colorB=262255
-        :target: http://ascl.net/1611.002
-
-.. image:: https://mybinder.org/badge.svg
+.. image:: https://camo.githubusercontent.com/c8e5db7a5d15b0e7c13480a0ed81db1ae2128b80/68747470733a2f2f62696e6465722e70616e67656f2e696f2f62616467655f6c6f676f2e737667
         :target: https://mybinder.org/v2/gh/jakeret/unet/master?filepath=notebooks%2Fcicles.ipynb
 
-.. image:: https://img.shields.io/badge/colab-unet-orange.svg?style=flat
-        :target: https://colab.research.google.com/drive/1BArjvM_DiPlEfMjVRjlkz4JF2-7movLK
-
-
+.. image:: https://camo.githubusercontent.com/52feade06f2fecbf006889a904d221e6a730c194/68747470733a2f2f636f6c61622e72657365617263682e676f6f676c652e636f6d2f6173736574732f636f6c61622d62616467652e737667
+        :target: https://colab.research.google.com/drive/1laPoOaGcqEBB3jTvb-pGnmDU21zwtgJB
 
 This is a generic **U-Net** implementation as proposed by `Ronneberger et al. <https://arxiv.org/pdf/1505.04597.pdf>`_ developed with **Tensorflow 2** and is a reimplementation of the original `tf_unet <https://github.com/jakeret/tf_unet>`_.
 
 The original code was developed and used for `Radio Frequency Interference mitigation using deep convolutional neural networks <http://arxiv.org/abs/1609.09077>`_ .
 
-The network can be trained to perform image segmentation on arbitrary imaging data. Checkout the `Usage <http://u-net.readthedocs.io/en/latest/usage.html>`_ section or the included Jupyter notebooks for a `toy problem <https://github.com/jakeret/unet/blob/master/notebooks/circles.ipynb>`_ .
+The network can be trained to perform image segmentation on arbitrary imaging data. Checkout the `Usage <http://u-net.readthedocs.io/en/latest/usage.html>`_ section, the included Jupyter notebooks for a `toy problem <https://github.com/jakeret/unet/blob/master/notebooks/circles.ipynb>`_ or the Oxford Pet Segmentaiton example available on `Google Colab <https://colab.research.google.com/drive/1laPoOaGcqEBB3jTvb-pGnmDU21zwtgJB>`_.
 
 The code is not tied to a specific segmentation such that it can be used in a toy problem to detect circles in a noisy image.
 
