@@ -12,6 +12,14 @@ unet.datasets.circles module
    :undoc-members:
    :show-inheritance:
 
+unet.datasets.oxford\_iiit\_pet module
+--------------------------------------
+
+.. automodule:: unet.datasets.oxford_iiit_pet
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 
 Module contents
 ---------------

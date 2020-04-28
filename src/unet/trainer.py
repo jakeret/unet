@@ -19,15 +19,11 @@ class Trainer:
 
     :param name: Name of the model, used to build the target log directory if no explicit path is given
     :param log_dir_path: Path to the directory where the model and tensorboard summaries should be stored
-    :param checkpoint_callback: Flag if checkpointing should be enabled. Alternatively a callback
-    instance can be passed
-    :param tensorboard_callback: Flag if information should be stored for tensorboard.
-    Alternatively a callback instance can be passed
-    :param tensorboard_images_callback: Flag if intermediate predictions should be stored in Tensorboard.
-    Alternatively a callback instance can be passed
+    :param checkpoint_callback: Flag if checkpointing should be enabled. Alternatively a callback instance can be passed
+    :param tensorboard_callback: Flag if information should be stored for tensorboard. Alternatively a callback instance can be passed
+    :param tensorboard_images_callback: Flag if intermediate predictions should be stored in Tensorboard. Alternatively a callback instance can be passed
     :param callbacks: List of additional callbacks
-    :param learning_rate_scheduler: The learning rate to be used. Either None for a constant
-    learning rate, a `Callback` or a `SchedulerType`
+    :param learning_rate_scheduler: The learning rate to be used. Either None for a constant learning rate, a `Callback` or a `SchedulerType`
     :param scheduler_opts: Further kwargs passed to the learning rate scheduler
     """
 
