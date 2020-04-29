@@ -128,7 +128,7 @@ def build_model(nx: Optional[int] = None,
 
     x = ConvBlock(layer_idx + 1, **conv_params)(x)
 
-    for layer_idx in range(layer_depth - 2, -1, -1):
+    for layer_idx in range(layer_idx, -1, -1):
         x = UpconvBlock(layer_idx,
                         filters_root,
                         kernel_size,
