@@ -14,11 +14,12 @@ def test_build_model():
     kernel_size = 3
     pool_size = 2
     filters_root = 64
+    layer_depth = 5
     model = unet.build_model(nx=nx,
                              ny=ny,
                              channels=channels,
                              num_classes=num_classes,
-                             layer_depth=5,
+                             layer_depth=layer_depth,
                              filters_root=filters_root,
                              kernel_size=kernel_size,
                              pool_size=pool_size)
@@ -28,19 +29,36 @@ def test_build_model():
     output_shape = model.get_layer("outputs").output.shape
     assert tuple(output_shape) == (None, 388, 388, num_classes)
 
-    conv2D_layers = [layer for layer in model.layers if type(layer) == layers.Conv2D]
+    filters_per_layer = [filters_root, 128, 256, 512, 1024, 512, 256, 128, filters_root]
+    conv2D_layers = _collect_conv2d_layers(model)
+
+    assert len(conv2D_layers) == 2 * len(filters_per_layer) + 1
+
     for conv2D_layer in conv2D_layers[:-1]:
         assert conv2D_layer.kernel_size == (kernel_size, kernel_size)
 
-    filters_per_layer = [filters_root, 128, 256, 512, 1024, 512, 256, 128, filters_root]
     for i, filters in enumerate(filters_per_layer):
         assert conv2D_layers[i*2].filters == filters
         assert conv2D_layers[i*2+1].filters == filters
 
     maxpool_layers = [layer for layer in model.layers if type(layer) == layers.MaxPool2D]
+
+    assert len(maxpool_layers) == layer_depth - 1
+
     for maxpool_layer in maxpool_layers[:-1]:
         assert maxpool_layer.pool_size == (pool_size, pool_size)
 
+
+def _collect_conv2d_layers(model):
+    conv2d_layers = []
+    for layer in model.layers:
+        if type(layer) == layers.Conv2D:
+            conv2d_layers.append(layer)
+        elif type(layer) == unet.ConvBlock:
+            conv2d_layers.append(layer.conv2d_1)
+            conv2d_layers.append(layer.conv2d_2)
+
+    return conv2d_layers
 
 
 @patch.object(unet, "Adam")
