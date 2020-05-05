@@ -33,6 +33,8 @@ class TensorBoardImageSummary(Callback):
 
         self._log_image_summaries(epoch, predictions)
 
+        self.file_writer.flush()
+
     def _log_image_summaries(self, epoch, predictions):
         cropped_images, cropped_labels = list(self.dataset
                                               .map(utils.crop_image_and_label_to_shape(predictions.shape[1:]))
