@@ -1,7 +1,8 @@
-from typing import Tuple
+from typing import Tuple, Dict
 
 import tensorflow as tf
 import tensorflow_datasets as tfds
+from tensorflow_datasets.core import DatasetInfo
 
 tfds.disable_progress_bar()
 
@@ -39,8 +40,18 @@ def load_image_test(datapoint):
 
 
 def load_data(buffer_size=1000, **kwargs) -> Tuple[tf.data.Dataset, tf.data.Dataset]:
-    dataset, info = tfds.load('oxford_iiit_pet:3.*.*', with_info=True, **kwargs)
+    dataset, info = _load_without_checksum_verification(**kwargs)
     train = dataset['train'].map(load_image_train, num_parallel_calls=tf.data.experimental.AUTOTUNE)
     test = dataset['test'].map(load_image_test)
     train_dataset = train.cache().shuffle(buffer_size).take(info.splits["train"].num_examples)
     return train_dataset, test
+
+
+def _load_without_checksum_verification(**kwargs) -> Tuple[Dict, DatasetInfo]:
+    builder = tfds.builder('oxford_iiit_pet:3.1.0')
+    # by setting register_checksums as True to pass the check
+    config = tfds.download.DownloadConfig(register_checksums=True)
+    builder.download_and_prepare(download_config=config)
+    dataset = builder.as_dataset()
+
+    return dataset, (builder.info)
