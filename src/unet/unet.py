@@ -15,6 +15,12 @@ class ConvBlock(layers.Layer):
 
     def __init__(self, layer_idx, filters_root, kernel_size, dropout_rate, padding, activation, **kwargs):
         super(ConvBlock, self).__init__(**kwargs)
+        self.layer_idx=layer_idx
+        self.filters_root=filters_root
+        self.kernel_size=kernel_size
+        self.dropout_rate=dropout_rate
+        self.padding=padding
+        self.activation=activation
 
         filters = _get_filter_count(layer_idx, filters_root)
         self.conv2d_1 = layers.Conv2D(filters=filters,
@@ -33,35 +39,66 @@ class ConvBlock(layers.Layer):
         self.dropout_2 = layers.Dropout(rate=dropout_rate)
         self.activation_2 = layers.Activation(activation)
 
-    def call(self, inputs, **kwargs):
+    def call(self, inputs, training=None, **kwargs):
         x = inputs
         x = self.conv2d_1(x)
-        x = self.dropout_1(x)
+
+        if training:
+            x = self.dropout_1(x)
         x = self.activation_1(x)
         x = self.conv2d_2(x)
-        x = self.dropout_2(x)
+
+        if training:
+            x = self.dropout_2(x)
+
         x = self.activation_2(x)
         return x
+
+    def get_config(self):
+        return dict(layer_idx=self.layer_idx,
+                    filters_root=self.filters_root,
+                    kernel_size=self.kernel_size,
+                    dropout_rate=self.dropout_rate,
+                    padding=self.padding,
+                    activation=self.activation,
+                    **super(ConvBlock, self).get_config(),
+                    )
 
 
 class UpconvBlock(layers.Layer):
 
     def __init__(self, layer_idx, filters_root, kernel_size, pool_size, padding, activation, **kwargs):
         super(UpconvBlock, self).__init__(**kwargs)
+        self.layer_idx=layer_idx
+        self.filters_root=filters_root
+        self.kernel_size=kernel_size
+        self.pool_size=pool_size
+        self.padding=padding
+        self.activation=activation
+
         filters = _get_filter_count(layer_idx + 1, filters_root)
         self.upconv = layers.Conv2DTranspose(filters // 2,
                                              kernel_size=(pool_size, pool_size),
                                              kernel_initializer=_get_kernel_initializer(filters, kernel_size),
                                              strides=pool_size, padding=padding)
 
-        self.activation = layers.Activation(activation)
+        self.activation_1 = layers.Activation(activation)
 
     def call(self, inputs, **kwargs):
         x = inputs
         x = self.upconv(x)
-        x = self.activation(x)
+        x = self.activation_1(x)
         return x
 
+    def get_config(self):
+        return dict(layer_idx=self.layer_idx,
+                    filters_root=self.filters_root,
+                    kernel_size=self.kernel_size,
+                    pool_size=self.pool_size,
+                    padding=self.padding,
+                    activation=self.activation,
+                    **super(UpconvBlock, self).get_config(),
+                    )
 
 class CropConcatBlock(layers.Layer):
 
