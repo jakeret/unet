@@ -43,6 +43,13 @@ Or to detect galaxies and star in wide field imaging data.
    :align: center
 
 
+The architectural elements of a U-Net consist of a contracting and expanding path:
+
+.. image:: https://raw.githubusercontent.com/jakeret/unet/master/docs/unet.png
+   :alt: Unet architecture.
+   :align: center
+
+
 As you use **unet** for your exciting discoveries, please cite the paper that describes the package::
 
 
