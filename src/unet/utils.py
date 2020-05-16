@@ -43,9 +43,10 @@ def crop_image_and_label_to_shape(shape: Tuple[int, int, int]):
 
 def to_rgb(img: np.array):
     """
-    Converts the given array into a RGB image. If the number of channels is not
-    3 the array is tiled such that it has 3 channels. Finally, the values are
-    rescaled to [0,255)
+    Converts the given array into a RGB image. If the number of channels is less
+    than 3, the array is tiled such that it has 3 channels. If the number of
+    channels is greater than 3, only the first 3 channels are used. Finally, the
+    values are rescaled to [0,255)
 
     :param img: the array to convert [nx, ny, channels]
 
@@ -57,6 +58,8 @@ def to_rgb(img: np.array):
     channels = img.shape[-1]
     if channels < 3:
         img = np.tile(img, 3)
+    elif channels > 3:
+        img = img[:,:,:3]
 
     img[np.isnan(img)] = 0
     img -= np.amin(img)
