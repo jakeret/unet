@@ -9,7 +9,7 @@ Development Lead
 
 Contributors
 ------------
-- None yet
+* `@tdrobbins <https://github.com/tdrobbins>`_
 
 Citations
 ---------
