@@ -4,7 +4,7 @@ import tensorflow as tf
 from tensorflow.keras import layers
 from tensorflow.keras import losses
 
-from unet import unet
+from unet import unet, custom_objects
 
 
 class TestConvBlock:
@@ -58,9 +58,10 @@ class TestUnetModel:
     def test_serialization(self, tmpdir):
         save_path = str(tmpdir / "unet_model")
         unet_model = unet.build_model(layer_depth=3, filters_root=2)
+        unet.finalize_model(unet_model)
         unet_model.save(save_path)
 
-        reconstructed_model = tf.keras.models.load_model(save_path)
+        reconstructed_model = tf.keras.models.load_model(save_path, custom_objects=custom_objects)
         assert reconstructed_model is not None
 
     def test_build_model(self):
@@ -104,7 +105,6 @@ class TestUnetModel:
 
         for maxpool_layer in maxpool_layers[:-1]:
             assert maxpool_layer.pool_size == (pool_size, pool_size)
-
 
     @patch.object(unet, "Adam")
     def test_finalize_model(self, AdamMock:Mock):

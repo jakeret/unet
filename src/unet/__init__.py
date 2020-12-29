@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from pkg_resources import get_distribution, DistributionNotFound
 
+from unet import metrics
 from unet.schedulers import SchedulerType
 from unet.trainer import Trainer
 from unet.unet import build_model, finalize_model
@@ -18,3 +19,7 @@ __all__ = [build_model,
            finalize_model,
            SchedulerType,
            Trainer]
+
+
+custom_objects = {'mean_iou': metrics.mean_iou,
+                  'dice_coefficient': metrics.dice_coefficient}
