@@ -10,6 +10,7 @@ Development Lead
 Contributors
 ------------
 * `@tdrobbins <https://github.com/tdrobbins>`_
+* `@ck090 <https://github.com/ck090>`_
 
 Citations
 ---------
