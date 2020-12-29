@@ -28,9 +28,20 @@ To use Tensorflow Unet in a project::
                 batch_size=1)
 
 
+Once the model is trained it can be saved using Tensorflow's save format::
+
+    from unet import custom_objects
+    unet_model.save(<save_path>)
+
+
+and loaded by using::
+
+    from unet import custom_objects
+    reconstructed_model = tf.keras.models.load_model(<save_path>, custom_objects=custom_objects)
+
+
 Keep track of the learning progress using *Tensorboard*. **unet** automatically outputs relevant summaries.
 
 .. image:: https://raw.githubusercontent.com/jakeret/unet/master/docs/stats.png
-   :alt: Segmentation of a toy problem.
    :align: center
 
