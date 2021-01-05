@@ -48,7 +48,7 @@ def load_data(buffer_size=1000, **kwargs) -> Tuple[tf.data.Dataset, tf.data.Data
 
 
 def _load_without_checksum_verification(**kwargs) -> Tuple[Dict, DatasetInfo]:
-    builder = tfds.builder('oxford_iiit_pet:3.1.0')
+    builder = tfds.builder('oxford_iiit_pet:3.2.0')
     # by setting register_checksums as True to pass the check
     config = tfds.download.DownloadConfig(register_checksums=True)
     builder.download_and_prepare(download_config=config)
