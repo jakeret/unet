@@ -11,6 +11,7 @@ Contributors
 ------------
 * `@tdrobbins <https://github.com/tdrobbins>`_
 * `@ck090 <https://github.com/ck090>`_
+* `gokarslan <https://github.com/gokarslan>`_
 
 Citations
 ---------
