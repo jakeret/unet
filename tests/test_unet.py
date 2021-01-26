@@ -1,5 +1,6 @@
 from unittest.mock import Mock, patch
 
+import numpy as np
 import tensorflow as tf
 from tensorflow.keras import layers
 from tensorflow.keras import losses
@@ -51,6 +52,18 @@ class TestUpconvBlock:
         assert new_upconv_block.padding == upconv_block.padding
         assert new_upconv_block.activation == upconv_block.activation
         assert new_upconv_block.activation == upconv_block.activation
+
+
+class TestCropConcatBlock():
+
+    def test_uneven_concat(self):
+        layer = unet.CropConcatBlock()
+        down_tensor = np.ones([1, 61, 61, 32])
+        up_tensor = np.ones([1, 52, 52, 32])
+
+        concat_tensor = layer(up_tensor, down_tensor)
+
+        assert concat_tensor.shape == (1, 52, 52, 64)
 
 
 class TestUnetModel:

@@ -110,8 +110,8 @@ class CropConcatBlock(layers.Layer):
         width_diff = (x1_shape[2] - x2_shape[2]) // 2
 
         down_layer_cropped = down_layer[:,
-                                        height_diff: (x1_shape[1] - height_diff),
-                                        width_diff: (x1_shape[2] - width_diff),
+                                        height_diff: (x2_shape[1] + height_diff),
+                                        width_diff: (x2_shape[2] + width_diff),
                                         :]
 
         x = tf.concat([down_layer_cropped, x], axis=-1)
